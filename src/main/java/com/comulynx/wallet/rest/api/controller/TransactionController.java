@@ -2,6 +2,7 @@ package com.comulynx.wallet.rest.api.controller;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,10 +147,20 @@ public class TransactionController {
 			String accountNo = balanceRequest.get("accountNo").getAsString();
 
 			// FIXME: Should return last 5 transactions from the database
-			List<Transaction> miniStatement = transactionRepository
-					.getMiniStatementUsingCustomerIdAndAccountNo(customerId, accountNo);
+			/*List<Transaction> miniStatement = transactionRepository
+					.getMiniStatementUsingCustomerIdAndAccountNo(customerId, accountNo);*/
+			Optional<List<Transaction>> optionalMiniStatement =
+                transactionRepository.getMiniStatementUsingCustomerIdAndAccountNo(
+                        customerId, accountNo);
 
-			return ResponseEntity.ok().body(gson.toJson(miniStatement));
+				if (optionalMiniStatement.isEmpty() || optionalMiniStatement.get().isEmpty()) 
+				{
+					throw new ResourceNotFoundException(
+							"No transactions found for customerId=" + customerId +
+							" and accountNo=" + accountNo);
+				}
+
+			return ResponseEntity.ok().body(gson.toJson(optionalMiniStatement));
 		} catch (Exception ex) {
 			logger.info("Exception {}", AppUtilities.getExceptionStacktrace(ex));
 

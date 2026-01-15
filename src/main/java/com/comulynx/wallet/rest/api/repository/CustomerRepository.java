@@ -45,9 +45,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	// @Query("?")
 	// List<Customer> findAllCustomersWhoseEmailContainsGmail();
 	
-	// ----------------------------------------------------
-    // Return all customers whose email contains 'gmail'
-    // ----------------------------------------------------
+	// -----------------------------------------------------------------
+    // Return all customers whose email contains 'gmail' implementation
+    // -----------------------------------------------------------------
     @Query("SELECT c FROM Customer c WHERE c.email LIKE %gmail%")
     List<Customer> findAllCustomersWhoseEmailContainsGmail();
 }

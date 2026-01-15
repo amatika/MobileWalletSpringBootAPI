@@ -1,6 +1,7 @@
 package com.comulynx.wallet.rest.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.validation.Valid;
 
@@ -69,6 +70,31 @@ public class CustomerController {
 			//TODO : Return a JSON object with the following after successful login
 			//Customer Name, Customer ID, email and Customer Account 
 
+			//---------------------------------------
+			//Login logic implementation
+			Customer customer = customerRepository
+                .findByCustomerId(customerId)
+                .orElseThrow(() ->
+                        new RuntimeException("Customer does not exist"));
+					
+				if (!customer.getPin().equals(customerPIN)) 
+				{
+					throw new RuntimeException("Invalid credentials");
+				}
+
+            Optional<Account> accountOpt = accountRepository.findAccountByCustomerId(customerId);
+            response.addProperty("customerName",
+                    customer.getFirstName() + " " + customer.getLastName());
+            response.addProperty("customerId", customer.getCustomerId());
+            response.addProperty("email", customer.getEmail());
+
+            accountOpt.ifPresent(account -> {
+                JsonObject acc = new JsonObject();
+                acc.addProperty("accountNo", account.getAccountNo());
+                acc.addProperty("balance", account.getBalance());
+                response.add("account", acc);
+            });
+
 			return ResponseEntity.status(200).body(HttpStatus.OK);
 
 		} catch (Exception ex) {
@@ -87,8 +113,10 @@ public class CustomerController {
 	 * @return
 	 */
 	@PostMapping("/")
-	public ResponseEntity<?> createCustomer(@Valid @RequestBody Customer customer) {
-		try {
+	public ResponseEntity<?> createCustomer(@Valid @RequestBody Customer customer)
+	 {
+		try 
+		{
 			String customerPIN = customer.getPin();
 			String email = customer.getEmail();
 			
@@ -96,6 +124,29 @@ public class CustomerController {
 			//  : Add logic to check if Customer with provided email, or
 			// customerId exists. If exists, throw a Customer with [?] exists
 			// Exception.
+            
+			// -----------------------------
+			// Check if customerId exists
+			// -----------------------------
+			if (customerRepository.findByCustomerId(customer.getCustomerId()).isPresent()) 
+			{
+				throw new RuntimeException("Customer with customerId already exists");
+			}
+
+			// -----------------------------
+			// Check if email exists
+			// -----------------------------
+			customerRepository.findAll().stream()
+					.filter(c -> c.getEmail().equalsIgnoreCase(customer.getEmail()))
+					.findAny()
+					.ifPresent(c -> {
+						throw new RuntimeException("Customer with email already exists");
+					});
+			
+			// -----------------------------
+			// Hash customer PIN (simple hash for testing)
+			// -----------------------------
+			customer.setPin(hashPin(customer.getPin()));
 
 			String accountNo = generateAccountNo(customer.getCustomerId());
 			Account account = new Account();
@@ -120,9 +171,33 @@ public class CustomerController {
 	 * in your accounts table)
 	 * 
 	 */
-	private String generateAccountNo(String customerId) {
-		// TODO : Add logic here - generate a random but unique Account No (NB:
-		// Account No should be unique in the accounts table)
-		return "";
+	
+	
+	//-----------------------------------------------------
+	 /* Generate an account number for a customer.
+	 * A customer can only have ONE account.
+	 */
+	//-----------------------------------------------------
+	private String generateAccountNo(String customerId) 
+	{
+
+		// Check if customer already has an account
+		if (accountRepository.findAccountByCustomerId(customerId).isPresent()) 
+		{
+			throw new RuntimeException(
+				"Account already exists for customerId: " + customerId
+			);
+		}
+
+		// Generate account number 
+		return "ACC" + System.currentTimeMillis()
+				+ (int) (Math.random() * 1000);
+	}
+
+
+	//method to add hashing to pin
+	private String hashPin(String pin) {
+		
+		return Integer.toHexString(pin.hashCode());
 	}
 }
