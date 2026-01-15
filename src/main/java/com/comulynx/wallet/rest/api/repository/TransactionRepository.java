@@ -32,7 +32,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query(
         value = """
             SELECT *
-            FROM transactions
+            FROM Transaction
             WHERE customer_id = :customerId
               AND account_no = :accountNo
             ORDER BY id DESC

@@ -49,8 +49,22 @@
             <scope>test</scope>
         </dependency>
 
-        <!--		 FIXME: Add Spring Boot DevTools dependency-->
-        <!--		 FIXME: Add H2 in-memory database dependency-->
+        <!--FIXME: Add Spring Boot DevTools dependency-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <version>3.2.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <!--FIXME: Add H2 in-memory database dependency-->
+        <!-- Source: https://mvnrepository.com/artifact/com.h2database/h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

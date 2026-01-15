@@ -25,7 +25,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     // ----------------------------------------------------
     @Modifying
     @Transactional
-    @Query("DELETE FROM customers c WHERE c.customerId = :customerId")
+    @Query("DELETE FROM Customer c WHERE c.customerId = :customerId")
     int deleteCustomerByCustomerId(String customerId);
 
 	// TODO : Implement the query and function below to update customer firstName using Customer Id
@@ -37,7 +37,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     // ------------------------------------------------------------
     @Modifying
     @Transactional
-    @Query("UPDATE customers c SET c.firstName = :firstName WHERE c.customerId = :customerId")
+    @Query("UPDATE Customer c SET c.firstName = :firstName WHERE c.customerId = :customerId")
     int updateCustomerByCustomerId(String firstName, String customerId);
 	
 	
@@ -48,6 +48,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	// -----------------------------------------------------------------
     // Return all customers whose email contains 'gmail' implementation
     // -----------------------------------------------------------------
-    @Query("SELECT c FROM Customer c WHERE c.email LIKE %gmail%")
+    @Query("SELECT c FROM Customer c WHERE c.email LIKE '%gmail%'")
     List<Customer> findAllCustomersWhoseEmailContainsGmail();
 }
