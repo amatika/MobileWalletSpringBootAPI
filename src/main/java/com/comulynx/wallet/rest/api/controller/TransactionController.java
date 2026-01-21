@@ -3,7 +3,7 @@ package com.comulynx.wallet.rest.api.controller;
 import java.util.List;
 import java.util.Random;
 import java.util.Optional;
-
+import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,11 @@ public class TransactionController {
 
 			// TODO : Add login here to get Last 100 Transactions By CustomerId
 			List<Transaction> last100Transactions = null;
-
+			Account account=accountRepository.findAccountByCustomerId(customerId).orElseThrow(() -> new RuntimeException("Account not found for this customer"));
+            last100Transactions=transactionRepository
+			.getMiniStatementUsingCustomerIdAndAccountNo(customerId, account.getAccountNo())
+			.orElse(Collections.emptyList());
+			
 			return ResponseEntity.ok().body(gson.toJson(last100Transactions));
 		} catch (Exception ex) {
 			logger.info("Exception {}", AppUtilities.getExceptionStacktrace(ex));

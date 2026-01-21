@@ -89,13 +89,10 @@ public class CustomerController {
             response.addProperty("email", customer.getEmail());
 
             accountOpt.ifPresent(account -> {
-                JsonObject acc = new JsonObject();
-                acc.addProperty("accountNo", account.getAccountNo());
-                acc.addProperty("balance", account.getBalance());
-                response.add("account", acc);
+                response.addProperty("accountNo", account.getAccountNo());
             });
 
-			return ResponseEntity.status(200).body(HttpStatus.OK);
+			return ResponseEntity.ok(response.toString());
 
 		} catch (Exception ex) {
 			logger.info("Exception {}", AppUtilities.getExceptionStacktrace(ex));
@@ -180,16 +177,12 @@ public class CustomerController {
 	//-----------------------------------------------------
 	private String generateAccountNo(String customerId) 
 	{
-
-		// Check if customer already has an account
 		if (accountRepository.findAccountByCustomerId(customerId).isPresent()) 
 		{
 			throw new RuntimeException(
 				"Account already exists for customerId: " + customerId
 			);
 		}
-
-		// Generate account number 
 		return "ACC" + System.currentTimeMillis()
 				+ (int) (Math.random() * 1000);
 	}

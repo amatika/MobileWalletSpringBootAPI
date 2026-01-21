@@ -31,6 +31,7 @@ public class AccountController {
 
 	@Autowired
 	private AccountRepository accountRepository;
+	
 
 	@GetMapping("/")
 	public List<Account> getAllAccount() {
@@ -50,6 +51,8 @@ public class AccountController {
 
 			// TODO : Add logic to find Account balance by CustomerId
 			Account account = null;
+			account = accountRepository.findAccountByCustomerId(customerId)
+            .orElseThrow(() -> new RuntimeException("Account not found for this customer"));
 
 			response.addProperty("balance", account.getBalance());
 			response.addProperty("accountNo", account.getAccountNo());
