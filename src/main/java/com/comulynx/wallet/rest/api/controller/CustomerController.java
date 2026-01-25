@@ -94,10 +94,14 @@ public class CustomerController {
 
 			return ResponseEntity.ok(response.toString());
 
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			logger.info("Exception {}", AppUtilities.getExceptionStacktrace(ex));
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
+			JsonObject errorResponse = new JsonObject();
+			errorResponse.addProperty("message", ex.getMessage());
+			errorResponse.addProperty("status", false);
+			return new ResponseEntity<>(errorResponse.toString(), HttpStatus.UNAUTHORIZED);
 		}
 	}
 

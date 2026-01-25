@@ -124,8 +124,7 @@ public class TransactionController {
 
 			response.addProperty("response_status", true);
 			response.addProperty("response_message", "Transaction Successful");
-
-//			return ResponseEntity.ok().body(gson.toJson(response));
+			
 			return ResponseEntity.status(200).body(gson.toJson(response));
 		} catch (Exception ex) {
 			logger.info("Exception {}", AppUtilities.getExceptionStacktrace(ex));
